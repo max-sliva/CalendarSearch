@@ -9,23 +9,10 @@ import kotlin.system.exitProcess
 
 class CalendarSearch: Application() {
     override fun start(primaryStage: Stage) {
-//        val locale =  Locale("ru", "RU")
-//        val bundle: ResourceBundle = ResourceBundle.getBundle("strings", locale)
-//        val fxmlLoader = FXMLLoader(this.javaClass.getResource("mainWindow.fxml"), bundle)
-
-//        fxmlLoader.setResources(ResourceBundle.getBundle("bundles.stringsForUI", locale));
-//        val fxmlPath = "${getCurrentPath()}/mainWindow.fxml"
-//        println("path = $fxmlPath")
-//        val fxmlLoader = FXMLLoader(URL("file:$fxmlPath")) //для jar-файла
         val fxmlLoader = getLoader("mainWindow.fxml")
-//        val fxmlLoader = FXMLLoader(this.javaClass.getResource("mainWindow.fxml")) //для запуска из IDE
         primaryStage.title = "CalendarSearch 0.1!"
-        val scene = Scene(fxmlLoader.load(), 1200.0, 900.0)
+        val scene = Scene(fxmlLoader.load(), 800.0, 600.0)
         primaryStage.scene = scene
-
-//        val scene = Scene(fxmlLoader.load(), 1200.0, 900.0)
-//        primaryStage?.initStyle(StageStyle.UNDECORATED)
-//        primaryStage?.setMaximized(true)
 
         primaryStage.show()
         primaryStage.onCloseRequest = EventHandler {
@@ -37,7 +24,7 @@ class CalendarSearch: Application() {
     companion object { //специальный объект для запуска проекта в рамках фреймворка JavaFX
         @JvmStatic // его всегда оставляем одинаковым для всех проектов
         fun main(args: Array<String>) {
-            launch(CalendarSearch::class.java) // Main – имя запускного класса
+            launch(CalendarSearch::class.java) // CalendarSearch – имя запускного класса
         }
     }
 }
