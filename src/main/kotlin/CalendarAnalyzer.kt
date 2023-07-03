@@ -16,6 +16,7 @@ class CalendarAnalyzer(var file: File) {
 
      */
     lateinit var excelWork: ExcelWork
+    var monthArray = ArrayList<MonthWithRanges>()
 
     init {
         println("file in CalendarAnalyzer = $file")
