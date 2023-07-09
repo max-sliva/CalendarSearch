@@ -21,6 +21,7 @@ class CalendarAnalyzer(var file: File) {
     init {
         println("file in CalendarAnalyzer = $file")
         excelWork = ExcelWork(file)
+        excelWork.printExcelFileToConsole()
     }
 
     fun getInfoForDay(day: String): String {
