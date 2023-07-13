@@ -1,6 +1,7 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
@@ -53,6 +54,10 @@ class ExcelWork(val file: File) {
         println("months = ${months.asList()}")
         val dateRanges: Array<String> = getDateRanges(rowWithDates, mergedRegions)
         println("dates = ${dateRanges.asList()}")
+        val rowWithIindex = getRowWithI(sheet, "I")
+        val rowWithI = sheet.getRow(rowWithIindex)
+        printRow(rowWithI, mergedRegions)
+        val rowWithII = getRowWithI(sheet, "II")
 //        var anchorCell: Cell?
 //        if (found > 0) { //если найдена ячейка с нужным якорным значением
 //            anchorCell = sheet.getRow(i).getCell(found, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK)
@@ -147,6 +152,20 @@ class ExcelWork(val file: File) {
 //            //exitProcess(1)
 //        }
 //        }
+    }
+
+    private fun getRowWithI(sheet: Sheet, textToFind: String): Int {
+        var rowWithI = -1
+        for (i in 3..61) {
+            val row = sheet.getRow(i)
+            val cell = row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+            if (cell.toString().contains(textToFind)) {
+                println("CELL: $i --> $cell")
+                rowWithI = i
+                break
+            }
+        }
+        return rowWithI
     }
 
     fun getDateRanges(row: Row, mergedRegions: MutableList<CellRangeAddress>): Array<String> {
