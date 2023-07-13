@@ -1,8 +1,7 @@
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.FormulaEvaluator
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileInputStream
@@ -192,13 +191,40 @@ class ExcelWork(val file: File) {
         return monthArray
     }
 
+    fun getCellStr(sheet: XSSFSheet, cell: Cell): String {
+        var res = ""
+        val formatter = DataFormatter()
+        var inRange = false
+        for (range in sheet.mergedRegions) {
+            if (range.isInRange(cell.rowIndex, cell.columnIndex)) {
+                for (rIndex in range.firstRow..range.lastRow) {
+                    for (cIndex in range.firstColumn..range.lastColumn) {
+                        res = "$res${formatter.formatCellValue(sheet.getRow(rIndex).getCell(cIndex))}"
+                    }
+                }
+                inRange = true
+            }
+        }
+        if (!inRange) {
+            res = formatter.formatCellValue(cell)
+        }
+        return res.trim()
+    }
     private fun printRow(row: Row, mergedRegions: MutableList<CellRangeAddress>){
+        // TODO: проверять ячейки по всем рядам из merge ячейки с I 
         for (cn in 0..row.lastCellNum) {
             // If the cell is missing from the file, generate a blank one
             // (Works by specifying a MissingCellPolicy)
+            val formatter = DataFormatter()
             val cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
             mergedRegions.forEach {
-                if (it.contains(cell.address)) print(" (in merge) ")
+                if (it.contains(cell.address)) {
+                    print(" (in merge) ")
+                    var res = ""
+                    res = "$res${formatter.formatCellValue(cell)}"
+                    print("res = $res")
+                    return@forEach
+                }
             }
 //            cell.cellStyle
 //            if (cell.){
