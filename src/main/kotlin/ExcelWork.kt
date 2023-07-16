@@ -47,16 +47,16 @@ class ExcelWork(val file: File) {
 //        mergedRegions.forEach {
 //            println(it)
 //        }
-        printRow(rowWithMonths, mergedRegions)
-        printRow(rowWithDates, mergedRegions)
+        printRow(rowWithMonths, mergedRegions, sheet)
+        printRow(rowWithDates, mergedRegions, sheet)
         val months = getMonths(rowWithMonths)
         println("months = ${months.asList()}")
         val dateRanges: Array<String> = getDateRanges(rowWithDates, mergedRegions)
         println("dates = ${dateRanges.asList()}")
         val rowWithIindex = getRowWithI(sheet, "I")
         val rowWithI = sheet.getRow(rowWithIindex)
-        printRow(rowWithI, mergedRegions)
-        val rowWithII = getRowWithI(sheet, "II")
+        printRow(rowWithI, mergedRegions, sheet)
+        val rowWithIIindex = getRowWithI(sheet, "II")
 //        var anchorCell: Cell?
 //        if (found > 0) { //если найдена ячейка с нужным якорным значением
 //            anchorCell = sheet.getRow(i).getCell(found, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK)
@@ -210,31 +210,45 @@ class ExcelWork(val file: File) {
         }
         return res.trim()
     }
-    private fun printRow(row: Row, mergedRegions: MutableList<CellRangeAddress>){
+    private fun printRow(row: Row, mergedRegions: MutableList<CellRangeAddress>, sheet: Sheet){
         // TODO: проверять ячейки по всем рядам из merge ячейки с I 
+        var mergeStart = 0
+        var mergeEnd = 0
+        var isCourseRow = false
         for (cn in 0..row.lastCellNum) {
             // If the cell is missing from the file, generate a blank one
             // (Works by specifying a MissingCellPolicy)
             val formatter = DataFormatter()
             val cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+            val curCol = cell.columnIndex
+            var res = "no merge"
+
             mergedRegions.forEach {
                 if (it.contains(cell.address)) {
-                    print(" (in merge) ")
-                    var res = ""
-                    res = "$res${formatter.formatCellValue(cell)}"
-                    print("res = $res")
+                    print(" (in merge ${it.firstRow}-${it.lastRow}) ")
+                    mergeStart = it.firstRow
+                    mergeEnd = it.lastRow
+//                    res = "$res${formatter.formatCellValue(cell)}"
+                    res = "${formatter.formatCellValue(cell)}"
+                    if (res.contains("I") or res.contains("V")) isCourseRow = true
+//                    print("res = $res")
                     return@forEach
                 }
             }
-//            cell.cellStyle
-//            if (cell.){
-//                print("$cell -- ${cell.arrayFormulaRange.firstRow}-${cell.arrayFormulaRange.lastRow}   || ")
-//            } else  print("$cell __ ${cell.address} || ")
-            try{
-                print("$cell -- ${cell.arrayFormulaRange.firstRow}-${cell.arrayFormulaRange.lastRow}   || ")
-            } catch (e:IllegalStateException){
-                print("$cell __ ${cell.address} || ")
+            if (res=="no merge" && isCourseRow) {
+                for(i in mergeStart..mergeEnd){
+                    val curRow = sheet.getRow(i)
+                    val curCell = curRow.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+                    res += " in $i=" +curCell.stringCellValue
+                }
             }
+            print("$res __ ${cell.address} || ")
+
+//            try{
+//                print("$res -- ${cell.arrayFormulaRange.firstRow}-${cell.arrayFormulaRange.lastRow}   || ")
+//            } catch (e:IllegalStateException){
+//                print("$res __ ${cell.address} || ")
+//            }
         }
         println()
     }
