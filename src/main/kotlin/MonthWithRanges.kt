@@ -1,6 +1,8 @@
-class MonthWithRanges (name: String){
+class MonthWithRanges (val name: String){
 //мап (номер курса , мап(диапазон дат, значение для этого диапазона)
     private var courseRangeMap = HashMap<Int, HashMap<IntRange, String>>()
+
+    fun getName() = name
 
     fun addMapForCourse(course: Int, map: HashMap<IntRange, String>){
         courseRangeMap[course] = map

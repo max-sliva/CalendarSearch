@@ -19,7 +19,7 @@ class ExcelWork(val file: File) {
         val sheet = wb.getSheet("График") //
         val formulaEvaluator: FormulaEvaluator = wb.creationHelper.createFormulaEvaluator()
         var i = 0
-        var found = -1 //номер ячейки с текстом "физ.песок", от него удобно считать остальные ячейки
+        var found = -1 //номер ячейки с текстом "Числа", от него удобно считать остальные ячейки
 //            for (row in sheet)  {//iteration over row using for each loop
 //                found = getCellNumber(row, formulaEvaluator)
 //                println()
@@ -210,6 +210,12 @@ class ExcelWork(val file: File) {
         }
         return res.trim()
     }
+
+    fun getMonths(): ArrayList<String> { //метод для получения месяцев
+        var monthList = arrayListOf<String>()
+
+        return monthList
+    }
     private fun printRow(row: Row, mergedRegions: MutableList<CellRangeAddress>, sheet: Sheet){
         // TODO: проверять ячейки по всем рядам из merge ячейки с I 
         var mergeStart = 0
@@ -226,7 +232,7 @@ class ExcelWork(val file: File) {
             mergedRegions.forEach {
                 if (it.contains(cell.address)) {
                     print(" (in merge ${it.firstRow}-${it.lastRow}) ")
-                    mergeStart = it.firstRow
+                    mergeStart = it.firstRow //это для вывода значения ячеек, разбитых по вертикали, у которых no merge
                     mergeEnd = it.lastRow
 //                    res = "$res${formatter.formatCellValue(cell)}"
                     res = "${formatter.formatCellValue(cell)}"
