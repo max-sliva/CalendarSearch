@@ -15,7 +15,7 @@ class CalendarAnalyzer(var file: File) {
     = - неделя отсутствует
 
      */
-    lateinit var excelWork: ExcelWork
+    private var excelWork: ExcelWork
     var monthArray = ArrayList<MonthWithRanges>()
 
     init {
